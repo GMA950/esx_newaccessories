@@ -36,8 +36,8 @@ client_scripts {
 
 dependencies {
 	'es_extended',
-	--'esx_skin',
-	'skincreator',
+	'esx_skin',
+	--'skincreator',
 	'esx_datastore',
 	'esx_np_skinshop'
 }
