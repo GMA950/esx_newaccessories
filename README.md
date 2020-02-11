@@ -1,4 +1,4 @@
-# esx_accessories
+# esx_newaccessories
 
 Shops with accessories (hat/helmet, glasses, masks, ears accessories). You can put on or take off the accessories with a menu. Accessories saved in database.
 
