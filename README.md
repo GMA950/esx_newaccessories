@@ -21,6 +21,17 @@ Now with the interface of np_skinshop
 https://www.youtube.com/watch?v=YfLNsmDOeXI
 credits to "guthierryalmeida"
 
+## Added Commands
+
+- /shirt
+- /pants
+- /shoes
+- /restore
+- /hat
+- /ears
+- /mask
+- /glasses
+
 
 ## Requirements
 - [esx_np_skinshop_v2](https://github.com/GMA950/esx_np_skinshop_v2)
