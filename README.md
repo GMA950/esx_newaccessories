@@ -17,6 +17,11 @@ Now with the interface of np_skinshop
 [![print1](https://i.imgur.com/Oufa50v.jpg)](https://i.imgur.com/Oufa50v.jpg)
 [![print1](https://i.imgur.com/CcHHCKK.jpg)](https://i.imgur.com/CcHHCKK.jpg)
 
+## Added Anims 
+https://www.youtube.com/watch?v=YfLNsmDOeXI
+credits to "guthierryalmeida"
+
+
 ## Requirements
 - [esx_np_skinshop_v2](https://github.com/GMA950/esx_np_skinshop_v2)
 - [esx_skin](https://github.com/ESX-Org/esx_skin)

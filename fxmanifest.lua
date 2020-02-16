@@ -39,5 +39,5 @@ dependencies {
 	'esx_skin',
 	--'skincreator',
 	'esx_datastore',
-	'esx_np_skinshop'
+	'esx_np_skinshop_v2'
 }

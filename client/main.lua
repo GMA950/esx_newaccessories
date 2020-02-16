@@ -81,10 +81,21 @@ end)
 RegisterNetEvent('esx_newaccessories:shoes')
 AddEventHandler('esx_newaccessories:shoes', function()
 	TriggerEvent('skinchanger:getSkin', function(skin)
-		local clothesSkin = {
+		--[[local clothesSkin = {
 			['shoes_1'] = 34, ['shoes_2'] = 0
 		}
-		TriggerEvent('skinchanger:loadClothes', skin, clothesSkin)
+		TriggerEvent('skinchanger:loadClothes', skin, clothesSkin)--]]
+		if(skin.sex == 0) then
+			local clothesSkin = {
+				['shoes_1'] = 34, ['shoes_2'] = 0
+			}
+			TriggerEvent('skinchanger:loadClothes', skin, clothesSkin)
+		else
+			local clothesSkin = {
+				['shoes_1'] = 35, ['shoes_2'] = 0
+			}
+			TriggerEvent('skinchanger:loadClothes', skin, clothesSkin)
+		end
 	end)
 end)
 
@@ -101,9 +112,18 @@ function SetUnsetAccessory(accessory)
 					mAccessory = 0
 				end
 
-				if skin[_accessory .. '_1'] == mAccessory then
+				if skin[_accessory .. '_1'] == mAccessory then --si ya tiene puesta la wea no entra a este if
 					mAccessory = accessorySkin[_accessory .. '_1']
 					mColor = accessorySkin[_accessory .. '_2']
+					if _accessory ~= "ears" then
+						TriggerEvent(_accessory, true)
+						Wait(500)
+					end
+				else
+					if _accessory ~= "ears" then
+						TriggerEvent(_accessory, false)
+						Wait(500)
+					end
 				end
 
 				local accessorySkin = {}
@@ -116,6 +136,85 @@ function SetUnsetAccessory(accessory)
 		end
 
 	end, accessory)
+end
+
+--
+-- Animation Glasses
+--
+RegisterNetEvent('glasses')
+AddEventHandler('glasses', function(putOn)
+	local player = PlayerPedId()
+	local dict   -- "take_off"
+	local anim
+
+	if putOn then
+		dict = "clothingspecs" --anim: take_off_helmet_stand
+		anim = "take_off"
+	else
+		dict = "clothingspecs" --anim: take_off_helmet_stand
+		anim = "take_off"
+	end
+
+	loadAnimDict( dict )
+	TaskPlayAnim( player, dict, anim, 8.0, 0.6, -1, 49, 0, 0, 0, 0 )
+	Wait (500)
+	ClearPedSecondaryTask(player)
+end)
+
+--
+-- Animation Helmet
+--
+RegisterNetEvent('helmet')
+AddEventHandler('helmet', function(putOn)
+	local player = PlayerPedId()
+	local dict -- = "missheist_agency2ahelmet" --anim: take_off_helmet_stand
+	local anim  --= "take_off_helmet_stand"
+	-- veh@bicycle@road_f@front@base --put_on_helmet_bike put_on_helmet_char
+	-- veh@bicycle@roadfront@base --put_on_helmet
+	-- veh@bike@chopper@front@base --put_on_helmet put_on_helmet_l
+	-- missheistdockssetup1hardhat@ --put_on_hat
+	--local test2 = "mp_masks@standard_car@ds@"
+	if putOn then
+		dict = "missheist_agency2ahelmet"--"anim@veh@bike@hemi_trike@front@base"--"veh@bicycle@roadfront@base" --anim: take_off_helmet_stand
+		anim = "take_off_helmet_stand"
+	else
+		dict = "missheist_agency2ahelmet" --anim: take_off_helmet_stand
+		anim = "take_off_helmet_stand"
+	end
+	loadAnimDict( dict )
+	TaskPlayAnim( player, dict, anim, 8.0, 0.6, -1, 49, 0, 0, 0, 0 )
+	Wait (500)
+	ClearPedSecondaryTask(player)
+end)
+
+--
+-- Animation Mask
+--
+RegisterNetEvent('mask')
+AddEventHandler('mask', function(putOn)
+	local player = PlayerPedId()
+	local dict
+	local anim
+
+	if putOn then
+		dict = "misscommon@std_take_off_masks"--"misscommon@std_take_off_masks" --"mp_masks@standard_car@ds@"
+		anim = "take_off_mask_ps"--"take_off_mask_ps" "put_on_mask"
+	else
+		dict = "missfbi4" --anim: take_off_helmet_stand
+		anim = "takeoff_mask"
+	end
+
+	loadAnimDict( dict )
+	TaskPlayAnim( player, dict, anim, 8.0, 0.6, -1, 49, 0, 0, 0, 0 )
+	Wait (500)
+	ClearPedSecondaryTask(player)
+end)
+
+function loadAnimDict(dict)
+	while (not HasAnimDictLoaded(dict)) do
+		RequestAnimDict(dict)
+		Citizen.Wait(5)
+	end
 end
 
 function OpenShopMenu(accessory)
