@@ -43,5 +43,10 @@ end)
 ESX.RegisterServerCallback('esx_newaccessories:checkMoney', function(source, cb)
 	local xPlayer = ESX.GetPlayerFromId(source)
 
-	cb(xPlayer.get('money') >= Config.Price)
+	if xPlayer.getMoney() >= Config.Price then
+		xPlayer.removeMoney(Config.Price)
+		cb(true)
+	else
+		cb(false)
+	end
 end)
