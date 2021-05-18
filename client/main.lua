@@ -1,10 +1,10 @@
-ESX								= nil
-local HasAlreadyEnteredMarker	= false
-local LastZone					= nil
-local CurrentAction				= nil
-local CurrentActionMsg			= ''
-local CurrentActionData			= {}
-local isDead					= false
+ESX = nil
+local HasAlreadyEnteredMarker = false
+local LastZone = nil
+local CurrentAction = nil
+local CurrentActionMsg = ''
+local CurrentActionData = {}
+local isDead = false
 local accesorio = nil
 local hasPaid = false
 
@@ -16,8 +16,7 @@ Citizen.CreateThread(function()
 end)
 
 function OpenAccessoryMenu()
-	ESX.UI.Menu.Open('default', GetCurrentResourceName(), 'set_unset_accessory',
-	{
+	ESX.UI.Menu.Open('default', GetCurrentResourceName(), 'set_unset_accessory', {
 		title = _U('set_unset'),
 		align = 'top-right',
 		elements = {
@@ -29,8 +28,7 @@ function OpenAccessoryMenu()
 			{label = _U('remove_shirt'), value = 'shirt'},
 			{label = _U('remove_pants'), value = 'pants'},
 			{label = _U('remove_shoes'), value = 'shoes'},
-		}
-	}, function(data, menu)
+		}}, function(data, menu)
 		menu.close()
 		if data.current.value ~= 'Helmet' and data.current.value ~= 'Ears' and data.current.value ~= 'Mask' and data.current.value ~= 'Glasses' then
 			if data.current.value == 'restore' then			
@@ -63,40 +61,24 @@ Citizen.CreateThread(function()
 	TriggerEvent('chat:addSuggestion', '/pants',  'Sacarte tus pantalones', {})
 	TriggerEvent('chat:addSuggestion', '/shoes',  'Sacarte tus zapatos', {})
 	TriggerEvent('chat:addSuggestion', '/restore',  'Ponerte toda tu ropa', {})
-
 	TriggerEvent('chat:addSuggestion', '/ears',  'Ponerte/Sacarte tus accesorios de la oreja', {})
 	TriggerEvent('chat:addSuggestion', '/mask',  'Ponerte/Sacarte tu mascara', {})
 	TriggerEvent('chat:addSuggestion', '/hat',  'Ponerte/Sacarte tu casco/sombrero', {})
 	TriggerEvent('chat:addSuggestion', '/glasses',  'Ponerte/Sacarte tus gafas', {})
-  end)
+end)
 
-RegisterCommand('shirt', function(source, args, raw)
-	TriggerEvent('esx_newaccessories:shirt')
-end)
-RegisterCommand('pants', function(source, args, raw)
-	TriggerEvent('esx_newaccessories:pants')
-end)
-RegisterCommand('shoes', function(source, args, raw)
-	TriggerEvent('esx_newaccessories:shoes')
-end)
+RegisterCommand('shirt', function(source, args, raw) TriggerEvent('esx_newaccessories:shirt') end)
+RegisterCommand('pants', function(source, args, raw) TriggerEvent('esx_newaccessories:pants') end)
+RegisterCommand('shoes', function(source, args, raw) TriggerEvent('esx_newaccessories:shoes') end)
+RegisterCommand('ears', function(source, args, raw)	SetUnsetAccessory('Ears') end)
+RegisterCommand('mask', function(source, args, raw) SetUnsetAccessory('Mask') end)
+RegisterCommand('hat', function(source, args, raw) SetUnsetAccessory('Helmet') end)
+RegisterCommand('glasses', function(source, args, raw) 	SetUnsetAccessory('Glasses') end)
 RegisterCommand('restore', function(source, args, raw)
 	ESX.TriggerServerCallback('esx_skin:getPlayerSkin', function(skin)
 		TriggerEvent('skinchanger:loadSkin', skin)
 	end)
 end)
-RegisterCommand('ears', function(source, args, raw)
-	SetUnsetAccessory('Ears')
-end)
-RegisterCommand('mask', function(source, args, raw)
-	SetUnsetAccessory('Mask')
-end)
-RegisterCommand('hat', function(source, args, raw)
-	SetUnsetAccessory('Helmet')
-end)
-RegisterCommand('glasses', function(source, args, raw)
-	SetUnsetAccessory('Glasses')
-end)
-
 
 RegisterNetEvent('esx_newaccessories:shirt')
 AddEventHandler('esx_newaccessories:shirt', function()
@@ -270,15 +252,13 @@ function OpenShopMenu(accessory)
 end
 
 function openEndDialog()
-	ESX.UI.Menu.Open('default', GetCurrentResourceName(), 'shop_confirm',
-	{
+	ESX.UI.Menu.Open('default', GetCurrentResourceName(), 'shop_confirm', {
 		title = _U('valid_purchase'),
 		align = 'top-left',
 		elements = {
 			{label = _U('no'), value = 'no'},
 			{label = _U('yes', ESX.Math.GroupDigits(Config.Price)), value = 'yes'}
-		}
-	}, function(data, menu)
+		}}, function(data, menu)
 		menu.close()
 		if data.current.value == 'yes' then
 			ESX.TriggerServerCallback('esx_newaccessories:checkMoney', function(hasEnoughMoney)
@@ -322,7 +302,6 @@ function openEndDialog()
 		CurrentAction     = 'shop_menu'
 		CurrentActionMsg  = _U('press_access')
 		CurrentActionData = {}
-
 	end)
 end
 
@@ -350,6 +329,11 @@ AddEventHandler('esx_newaccessories:hasEnteredMarker', function(zone)
 	CurrentAction     = 'shop_menu'
 	CurrentActionMsg  = _U('press_access')
 	CurrentActionData = { accessory = zone }
+
+	TriggerEvent('skinchanger:getSkin', function(skin)
+		TriggerEvent('skinchanger:loadClothes', skin, clothes)
+		TriggerEvent('esx_skin:setLastSkin', skin)
+	end)
 end)
 
 AddEventHandler('esx_newaccessories:hasExitedMarker', function(zone)
@@ -368,7 +352,7 @@ Citizen.CreateThread(function()
 	for k,v in pairs(Config.ShopsBlips) do
 		if v.Pos ~= nil then
 			for i=1, #v.Pos, 1 do
-				local blip = AddBlipForCoord(v.Pos[i].x, v.Pos[i].y, v.Pos[i].z)
+				local blip = AddBlipForCoord(v.Pos[i])
 
 				SetBlipSprite (blip, v.Blip.sprite)
 				SetBlipDisplay(blip, 4)
@@ -388,6 +372,7 @@ end)
 Citizen.CreateThread(function()
 	while true do
 		Citizen.Wait(0)
+		-- unoptimized loop
 		local coords = GetEntityCoords(PlayerPedId())
 		for k,v in pairs(Config.Zones) do
 			for i = 1, #v.Pos, 1 do
@@ -404,12 +389,12 @@ Citizen.CreateThread(function()
 	while true do
 		Citizen.Wait(200)
 
-		local coords      = GetEntityCoords(PlayerPedId())
-		local isInMarker  = false
+		local coords = GetEntityCoords(PlayerPedId())
+		local isInMarker = false
 		local currentZone = nil
 		for k,v in pairs(Config.Zones) do
 			for i = 1, #v.Pos, 1 do
-				if GetDistanceBetweenCoords(coords, v.Pos[i].x, v.Pos[i].y, v.Pos[i].z, true) < Config.Size.x then
+				if GetDistanceBetweenCoords(coords, v.Pos[i], true) < Config.Size.x then
 					isInMarker  = true
 					currentZone = k
 				end
@@ -426,7 +411,6 @@ Citizen.CreateThread(function()
 			HasAlreadyEnteredMarker = false
 			TriggerEvent('esx_newaccessories:hasExitedMarker', LastZone)
 		end
-
 	end
 end)
 
@@ -435,7 +419,7 @@ Citizen.CreateThread(function()
 	while true do
 		Citizen.Wait(0)
 		
-		if CurrentAction ~= nil then
+		if CurrentAction then
 			ESX.ShowHelpNotification(CurrentActionMsg)
 
 			if IsControlJustReleased(0, 38) and CurrentActionData.accessory then
